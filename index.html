@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Digit recognition</title>
+
+    <style>
+      #matrix {
+        width: 256px;
+        height: 256px;
+        margin-top: 10px;
+        border: 1px solid black;
+      }
+
+      h3 {
+        margin-bottom: 5px;
+      }
+
+      .cell {
+        float: left;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      #clear {
+        display: inline-block;
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Digit recognition</h1>
+
+    <h3>Please select desired side length:</h3>
+    <input
+      type="range"
+      min="8"
+      max="64"
+      step="1"
+      value="8"
+      oninput="this.nextElementSibling.value = this.value"
+    />
+    <output>8</output>
+
+    <div id="matrix"></div>
+
+    <button id="clear" onclick="renderMatrix()">Clear the board</button>
+    <button id="submit" onclick="submitMatrix()">Submit the board</button>
+
+    <script>
+      window.mouseDown = false;
+      document.onmousedown = () => (window.mouseDown = true);
+      document.onmouseup = () => (window.mouseDown = false);
+
+      const matrix = document.getElementById("matrix");
+      const slider = document.getElementsByTagName("input")[0];
+
+      const renderMatrix = () => {
+        const size = slider.value;
+
+        matrix.textContent = "";
+
+        for (let i = 0; i < size * size; i++) {
+          const div = matrix.appendChild(document.createElement("div"));
+          div.classList.add("cell");
+          div.setAttribute("value", 0);
+
+          div.style.width = (256 - size * 2) / size + "px";
+          div.style.height = (256 - size * 2) / size + "px";
+        }
+
+        const cells = document.getElementsByClassName("cell");
+
+        for (let cell of cells) {
+          cell.addEventListener("mouseover", function () {
+            if (window.mouseDown) {
+              this.style.backgroundColor = "black";
+              this.setAttribute("value", 1);
+            }
+          });
+        }
+      };
+
+      renderMatrix(8);
+
+      slider.addEventListener("input", function () {
+        if (this.value >= 8 && this.value <= 64) renderMatrix();
+      });
+
+      const submitMatrix = () => {
+        const size = slider.value;
+        const cells = document.getElementsByClassName("cell");
+        const result = [];
+
+        for (let cell of cells) result.push(cell.getAttribute("value"));
+        console.log(result);
+      };
+    </script>
+  </body>
+</html>
